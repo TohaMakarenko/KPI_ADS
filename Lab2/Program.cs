@@ -8,8 +8,9 @@ namespace Lab2
     {
         static void Main(string[] args)
         {
-            var sha = new SHA1Algorithm();
-            System.Console.WriteLine(string.Join("", sha.SHA1("123").Select(x => x.ToString("X"))));
+            var str = "123";
+            var result = SHA1Algorithm.SHA1(str);
+            Console.WriteLine(string.Join("", result.Select(x => x.ToString("X"))));
         }
     }
 }

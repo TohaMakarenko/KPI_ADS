@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Lab2
 {
-    public class SHA1Algorithm
+    public static class SHA1Algorithm
     {
         private static readonly uint[] H = new uint[] {
             0x67452301,
@@ -21,14 +21,6 @@ namespace Lab2
             0xCA62C1D6
         };
 
-        private List<byte> message;
-        private long bitlen;
-        private byte[] M = new byte[64];
-        private uint[] W = new uint[80];
-        private string result;
-        uint A, B, C, D, E, T;
-
-
         private static uint F(uint j, uint x, uint y, uint z)
         {
             if (j < 20)
@@ -43,15 +35,18 @@ namespace Lab2
                 return 0;
         }
 
-        private void extension()
+        private static long extension(List<byte> message)
         {
-            bitlen = message.Count * 8;
+            var bitlen = message.Count * 8;
             message.Add(0x80);
             while ((message.Count * 8) % 512 != 448)
+            {
                 message.Add(0);
+            }
+            return bitlen;
         }
 
-        private void AddingLength()
+        private static void AddingLength(long bitlen, List<byte> message)
         {
             var temp = message.Count;
             message.AddRange(new byte[8]);
@@ -63,8 +58,14 @@ namespace Lab2
             }
         }
 
-        private void MessageProcessing()
+        private static uint[] MessageProcessing(long bitlen, List<byte> message)
         {
+            uint[] h = new uint[5];
+            H.CopyTo(h,0);
+            uint[] W = new uint[80];
+            uint A, B, C, D, E, T;
+            byte[] M = new byte[64];
+            
             for (var i = 0; i < message.Count; i += 64)
             {
                 for (var k = 0; k < 64; k++)
@@ -85,11 +86,11 @@ namespace Lab2
                     W[k] = RotateLeft((W[k - 3] ^ W[k - 8] ^ W[k - 14] ^ W[k - 16]), 1);
                 }
 
-                A = H[0];
-                B = H[1];
-                C = H[2];
-                D = H[3];
-                E = H[4];
+                A = h[0];
+                B = h[1];
+                C = h[2];
+                D = h[3];
+                E = h[4];
 
                 for (uint j = 0; j < 80; j++)
                 {
@@ -101,20 +102,21 @@ namespace Lab2
                     A = T;
                 }
 
-                H[0] += A; H[1] += B; H[2] += C; H[3]+= D; H[4] += E;
+                h[0] += A; h[1] += B; h[2] += C; h[3] += D; h[4] += E;
             }
+            return h;
         }
-        private uint RotateLeft(uint original, int bits)
+        private static uint RotateLeft(uint original, int bits)
         {
             return (original << bits) | (original >> (32 - bits));
         }
 
-        public uint[] SHA1(string message) {
-            this.message = Encoding.ASCII.GetBytes(message).ToList();
-            extension();
-            AddingLength();
-            MessageProcessing();
-            return H;
+        public static uint[] SHA1(string message)
+        {
+            List<byte> byteMessage = Encoding.ASCII.GetBytes(message).ToList();
+            var bitlen = extension(byteMessage);
+            AddingLength(bitlen, byteMessage);
+            return MessageProcessing(bitlen, byteMessage);
         }
     }
 }
