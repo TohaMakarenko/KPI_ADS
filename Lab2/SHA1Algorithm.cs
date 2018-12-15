@@ -21,16 +21,16 @@ namespace Lab2
             0xCA62C1D6
         };
 
-        private static uint F(uint j, uint x, uint y, uint z)
+        private static uint F(uint j, uint b, uint c, uint d)
         {
             if (j < 20)
-                return (x & y) | ((~x) & z);
+                return (b & c) | ((~b) & d);
             else if (j < 40)
-                return x ^ y ^ z;
+                return b ^ c ^ d;
             else if (j < 60)
-                return (x & y) | (x & z) | (y & z);
+                return (b & c) | (b & d) | (c & d);
             else if (j < 80)
-                return x ^ y ^ z;
+                return b ^ c ^ d;
             else
                 return 0;
         }
