@@ -6,7 +6,7 @@ namespace Lab_3
     {
         static void Main(string[] args)
         {
-            var key = ElGamalAlgorithm.GenerateKeys(239);
+            var key = ElGamalAlgorithm.GenerateKeys();
             
             Console.WriteLine("p: " + key.P);
             Console.WriteLine("g: " + key.G);
